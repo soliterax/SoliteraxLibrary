@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.31911.260
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoliteraxLibrary", "SonsuzAlgoritma\SoliteraxLibrary.csproj", "{5E1273ED-5157-4EF8-9BAB-DB50B9A38673}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoliteraxControlLibrary", "SoliteraxControlLibrary\SoliteraxControlLibrary.csproj", "{1994F2B7-3409-4F72-B68E-DFB617F8054F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E1273ED-5157-4EF8-9BAB-DB50B9A38673}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E1273ED-5157-4EF8-9BAB-DB50B9A38673}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E1273ED-5157-4EF8-9BAB-DB50B9A38673}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E1273ED-5157-4EF8-9BAB-DB50B9A38673}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1994F2B7-3409-4F72-B68E-DFB617F8054F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1994F2B7-3409-4F72-B68E-DFB617F8054F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1994F2B7-3409-4F72-B68E-DFB617F8054F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1994F2B7-3409-4F72-B68E-DFB617F8054F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5C708693-1377-4A2A-8C67-9A547013EF56}
+	EndGlobalSection
+EndGlobal
