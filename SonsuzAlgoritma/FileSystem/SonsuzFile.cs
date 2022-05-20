@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace SoliteraxLibrary
+namespace SoliteraxLibrary.FileSystem
 {
 	public class SonsuzFile
 	{

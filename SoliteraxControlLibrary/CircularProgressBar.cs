@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SoliteraxLibrary.UI
+namespace SoliteraxControlLibrary
 {
     public class CircularProgressBar : System.Windows.Forms.Control
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SoliteraxLibrary.SQLConnection;
+using SoliteraxLibrary.SQLSystem;
 using SoliteraxLibrary.Soliterax_Hub;
 
 namespace SoliteraxLibrary
