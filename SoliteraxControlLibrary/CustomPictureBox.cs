@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace Marketing.Framework
+namespace SoliteraxControlLibrary
 {
     public class CustomPictureBox : PictureBox
     {
@@ -25,8 +25,8 @@ namespace Marketing.Framework
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            if(ON_ELLIPSE)
-                using(var gp = new GraphicsPath())
+            if (ON_ELLIPSE)
+                using (var gp = new GraphicsPath())
                 {
                     gp.AddEllipse(new Rectangle(0, 0, this.Width - 1, this.Height - 1));
                     this.Region = new Region(gp);

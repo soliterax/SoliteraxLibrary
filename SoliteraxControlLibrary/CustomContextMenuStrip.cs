@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 
-namespace Marketing.Framework
+namespace SoliteraxControlLibrary
 {
     public class CustomContextMenuStrip : ContextMenuStrip
     {
 
         public CustomContextMenuStrip()
         {
-            
+
         }
 
         protected override bool ProcessDialogKey(Keys ketData)

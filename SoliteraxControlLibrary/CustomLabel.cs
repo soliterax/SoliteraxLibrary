@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Marketing.Framework
+namespace SoliteraxControlLibrary
 {
     public class CustomLabel : Label
     {
@@ -172,7 +172,7 @@ namespace Marketing.Framework
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if(HAVE_BORDER)
+            if (HAVE_BORDER)
                 ControlPaint.DrawBorder(e.Graphics, e.ClipRectangle,
                     BORDER_LEFT_COLOR, BORDER_LEFT_SIZE, ButtonBorderStyle.Solid,
                     BORDER_TOP_COLOR, BORDER_TOP_SIZE, ButtonBorderStyle.Solid,

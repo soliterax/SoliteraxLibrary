@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
-namespace Marketing.Framework
+namespace SoliteraxControlLibrary
 {
     public class CustomPanel : Panel
     {
-        
+
         //Fields
         private bool BORDER = false;
         private bool HAVEELLIPSE = false;
@@ -23,28 +24,85 @@ namespace Marketing.Framework
         private Color BORDER_TOP_COLOR = Color.White;
         private Color BORDER_BOTTOM_COLOR = Color.White;
         private int BORDER_RADIUS = 30;
-        private EllipseControl ellipse = new EllipseControl();
 
         //Constructor
         public CustomPanel()
         {
-            
+
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if(BORDER)
+            if (BORDER)
                 ControlPaint.DrawBorder(e.Graphics, e.ClipRectangle,
                     BORDER_LEFT_COLOR, BORDER_LEFT_SIZE, ButtonBorderStyle.Solid,
                     BORDER_TOP_COLOR, BORDER_TOP_SIZE, ButtonBorderStyle.Solid,
                     BORDER_RIGHT_COLOR, BORDER_RIGHT_SIZE, ButtonBorderStyle.Solid,
                     BORDER_BOTTOM_COLOR, BORDER_BOTTOM_SIZE, ButtonBorderStyle.Solid);
-            if(HAVEELLIPSE)
+            if (HAVEELLIPSE)
             {
-                ellipse.TargetControl = this;
-                ellipse.CornerRadius = BORDER_RADIUS;
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+                RectangleF rectSurface = new RectangleF(0, 0, this.Width, this.Height);
+                RectangleF rectBorder = new RectangleF(1, 1, this.Width - 0.8F, this.Height - 1);
+
+                if(BORDER_RADIUS > 2)
+                {
+                    using (GraphicsPath pathGurface = GetFigurePath(rectSurface, BORDER_RADIUS))
+                        using (GraphicsPath pathBorder = GetFigurePath(rectBorder, BORDER_RADIUS - 1F))
+                            using (Pen penSurface = new Pen(this.Parent.BackColor, 2)) 
+                                using (Pen penBorder = new Pen(borderColor, borderSize))
+                                {
+                                    penBorder.Alignment = PenAlignment.Inset;
+                                    this.Region = new Region(pathGurface);
+
+                                    e.Graphics.DrawPath(penSurface, pathGurface);
+
+                                    if (BORDER_RIGHT_SIZE >= 1)
+                                        e.Graphics.DrawPath(penBorder, pathBorder);
+                                }
+                }
+                else
+                {
+                    this.Region = new Region(rectSurface);
+                    if(BORDER_RIGHT_SIZE >= 1)
+                    {
+                        using(Pen penBorder = new Pen(borderColor, borderSize))
+                        {
+                            penBorder.Alignment = PenAlignment.Inset;
+                            e.Graphics.DrawRectangle(penBorder, 0, 0, this.Width - 1, this.Height - 1);
+                        }
+                    }
+                }
             }
+
+        }
+
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
+            this.Parent.BackColorChanged += new EventHandler(Container_BackColorChanged);
+        }
+
+        private void Container_BackColorChanged(object sender, EventArgs e)
+        {
+            if (this.DesignMode)
+                this.Invalidate();
+        }
+
+        public GraphicsPath GetFigurePath(RectangleF rect, float radius)
+        {
+
+            GraphicsPath path = new GraphicsPath();
+            path.StartFigure();
+            path.AddArc(rect.X, rect.Y, radius, radius, 180, 90);
+            path.AddArc(rect.Width - radius, rect.Y, radius, radius, 270, 90);
+            path.AddArc(rect.Width - radius, rect.Height - radius, radius, radius, 0, 90);
+            path.AddArc(rect.X, rect.Height - radius, radius, radius, 90, 90);
+            path.CloseFigure();
+
+            return path;
 
         }
 
