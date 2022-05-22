@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SoliteraxLibrary.Soliterax_Hub.Exceptions;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using SoliteraxLibrary.Soliterax_Hub.Exceptions;
 
 namespace SoliteraxLibrary
 {
@@ -122,20 +120,21 @@ namespace SoliteraxLibrary
 
             Socket socket = (Socket)ar.AsyncState;
 
-            if(socket.Connected)
+            if (socket.Connected)
             {
                 int received;
                 try
                 {
                     received = socket.EndReceive(ar);
-                } catch(ServerStreamException e)
+                }
+                catch (ServerStreamException e)
                 {
 
                     throw new ServerStreamException(e.Message);
-                    
+
                 }
-                
-                if(received != 0)
+
+                if (received != 0)
                 {
                     byte[] dataBuıffer = new byte[received];
 
@@ -143,7 +142,8 @@ namespace SoliteraxLibrary
 
                     ServerListenerEvent(Encoding.ASCII.GetString(dataBuıffer));
                 }
-            } else
+            }
+            else
             {
                 ServerStreamEvent(socket, "exit");
                 return;

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SoliteraxLibrary.Soliterax_Hub;
 using SoliteraxLibrary.SQLSystem;
-using SoliteraxLibrary.Soliterax_Hub;
+using System;
 
 namespace SoliteraxLibrary
 {
@@ -23,7 +19,7 @@ namespace SoliteraxLibrary
         #region Connect
         public void Connect(string connectionString)
         {
-            switch(type)
+            switch (type)
             {
                 case ConnectionType.SQL:
                     sql = new ConnectSQL(connectionString);
@@ -42,7 +38,7 @@ namespace SoliteraxLibrary
         #region Get Connection
         public Object GetConnection()
         {
-            switch(type)
+            switch (type)
             {
                 case ConnectionType.SQL:
                     return sql;
@@ -59,7 +55,7 @@ namespace SoliteraxLibrary
         #region Set Connection
         public void SetConnection(ConnectionType type, object obj)
         {
-            switch(type)
+            switch (type)
             {
                 case ConnectionType.SQL:
                     sql = (ConnectSQL)obj;

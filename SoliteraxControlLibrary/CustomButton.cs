@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Windows.Forms;
 
 namespace SoliteraxControlLibrary
 {
+    [ToolboxBitmap(typeof(CustomButton), "CustomButton.bmp")]
     public class CustomButton : Button
     {
 
@@ -16,11 +18,17 @@ namespace SoliteraxControlLibrary
         int BORDER_SIZE = 1;
         Color BORDER_COLOR = Color.White;
 
+        public CustomButton()
+        {
+            base.FlatStyle = FlatStyle.Flat;
+            base.BackColor = Color.White;
+            base.ForeColor = Color.Black;
+        }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
 
             RectangleF rectSurface = new RectangleF(0, 0, this.Width, this.Height);
             RectangleF rectBorder = new RectangleF(1, 1, this.Width - 0.8F, this.Height - 1);
@@ -29,7 +37,7 @@ namespace SoliteraxControlLibrary
             {
                 using (GraphicsPath pathGurface = GetFigurePath(rectSurface, BORDER_RADIUS))
                 using (GraphicsPath pathBorder = GetFigurePath(rectBorder, BORDER_RADIUS - 1F))
-                using (Pen penSurface = new Pen(this.Parent.BackColor, 2))
+                using (Pen penSurface = new Pen(this.BackColor, 2))
                 using (Pen penBorder = new Pen(BORDER_COLOR, BORDER_SIZE))
                 {
                     penBorder.Alignment = PenAlignment.Inset;
@@ -83,6 +91,10 @@ namespace SoliteraxControlLibrary
 
         }
 
+        [Browsable(true)]
+        [Category("Extended Properties")]
+        [Description("Set Border Color")]
+        [DisplayName("Border Color")]
         public Color BorderColor
         {
             get
@@ -96,6 +108,10 @@ namespace SoliteraxControlLibrary
             }
         }
 
+        [Browsable(true)]
+        [Category("Extended Properties")]
+        [Description("Set Border Size")]
+        [DisplayName("Border Size")]
         public int BorderSize
         {
             get
@@ -109,6 +125,10 @@ namespace SoliteraxControlLibrary
             }
         }
 
+        [Browsable(true)]
+        [Category("Extended Properties")]
+        [Description("MAke Border Ellipse")]
+        [DisplayName("Border Radius")]
         public int BorderRadius
         {
             get

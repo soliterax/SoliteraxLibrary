@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SoliteraxLibrary.SQLSystem
 {
@@ -18,11 +14,11 @@ namespace SoliteraxLibrary.SQLSystem
             st1.dataTable = table;
             foreach (Storage st in tables)
             {
-                if(st.dataTable == table)
+                if (st.dataTable == table)
                 {
-                    
+
                     st1.id = st.id;
-                    
+
                     tables.Remove(st);
                     tables.Add(st1);
 
@@ -37,9 +33,9 @@ namespace SoliteraxLibrary.SQLSystem
 
         public void RemoveTable(int id)
         {
-            foreach(Storage st in tables)
+            foreach (Storage st in tables)
             {
-                if(st.id == id)
+                if (st.id == id)
                 {
                     tables.Remove(st);
                     break;
@@ -50,9 +46,9 @@ namespace SoliteraxLibrary.SQLSystem
 
         public void RemoveTable(DataTable table)
         {
-            foreach(Storage st in tables)
+            foreach (Storage st in tables)
             {
-                if(st.dataTable == table)
+                if (st.dataTable == table)
                 {
                     tables.Remove(st);
                     break; ;

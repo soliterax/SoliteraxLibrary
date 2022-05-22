@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 
 namespace SoliteraxLibrary.FileSystem
 {
@@ -18,14 +15,16 @@ namespace SoliteraxLibrary.FileSystem
         {
             try
             {
-                if(!File.Exists(path))
+                if (!File.Exists(path))
                     File.Create(path);
-            } catch(DirectoryNotFoundException)
+            }
+            catch (DirectoryNotFoundException)
             {
                 DirectoryInfo di = Directory.CreateDirectory(path);
                 di.Delete();
                 File.Create(path);
-            } catch(UnauthorizedAccessException)
+            }
+            catch (UnauthorizedAccessException)
             {
 
             }
@@ -34,7 +33,7 @@ namespace SoliteraxLibrary.FileSystem
 
         public bool ReadBoolean(string data)
         {
-            for(int i = 0; i < this.data.ToArray().Length; i++)
+            for (int i = 0; i < this.data.ToArray().Length; i++)
             {
                 if (this.data.ToArray()[i].Equals(data)) return (bool)value.ToArray()[i];
             }
@@ -104,15 +103,15 @@ namespace SoliteraxLibrary.FileSystem
             {
                 ChangeList(data, value);
             }
-                
+
         }
 
         public void WriteList(string data, object value)
         {
             string alltext = "";
-            foreach(object s in ((List<object>)value))
+            foreach (object s in ((List<object>)value))
             {
-                
+
             }
         }
 
@@ -142,11 +141,11 @@ namespace SoliteraxLibrary.FileSystem
         public void SaveFile()
         {
             string allText = "";
-            for(int i = 0; i < this.data.Count; i++)
+            for (int i = 0; i < this.data.Count; i++)
             {
                 allText += this.data.ToArray()[i].ToString() + "=" + this.value.ToArray()[i].ToString() + Environment.NewLine;
             }
-            using(StreamWriter sw = new StreamWriter(path))
+            using (StreamWriter sw = new StreamWriter(path))
             {
                 sw.WriteLine(allText);
                 sw.Flush();
@@ -156,7 +155,7 @@ namespace SoliteraxLibrary.FileSystem
 
         public void ClearFile()
         {
-            using(StreamWriter sw = new StreamWriter(path))
+            using (StreamWriter sw = new StreamWriter(path))
             {
                 sw.WriteLine("");
                 sw.Flush();

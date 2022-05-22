@@ -62,7 +62,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomTextBox.cs">
-      <SubType>Component</SubType>
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="EllipseControl.cs">
       <SubType>Component</SubType>

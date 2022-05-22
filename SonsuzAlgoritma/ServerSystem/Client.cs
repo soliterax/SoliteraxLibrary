@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using SoliteraxLibrary.Soliterax_Hub.Exceptions;
+using System;
 using System.Net.Sockets;
-using System.Net;
 using System.Text;
 using System.Threading;
-using SoliteraxLibrary.Soliterax_Hub.Exceptions;
 namespace SoliteraxLibrary.Soliterax_Hub
 {
     public class Client : SoliteraxLibrary.Soliterax_Hub.Events
@@ -71,7 +68,7 @@ namespace SoliteraxLibrary.Soliterax_Hub
 
         public void sendText(string text)
         {
-            if(_clientSocket.Connected)
+            if (_clientSocket.Connected)
             {
                 byte[] bufferData = Encoding.ASCII.GetBytes(text);
                 _clientSocket.Send(bufferData);
@@ -103,7 +100,8 @@ namespace SoliteraxLibrary.Soliterax_Hub
                 messageEvent.DynamicInvoke(Encoding.ASCII.GetString(dataBuffer).ToString());
 
                 //ClientListenerEvent(Encoding.ASCII.GetString(dataBuffer).ToString());
-            } catch(ClientListenerException e)
+            }
+            catch (ClientListenerException e)
             {
                 throw new ClientListenerException(e.Message);
             }
@@ -114,9 +112,9 @@ namespace SoliteraxLibrary.Soliterax_Hub
 
         private void ServerConnectLoop()
         {
-            while(true)
+            while (true)
             {
-                if(!_clientSocket.Connected)
+                if (!_clientSocket.Connected)
                 {
                     int attempts = 0;
                     try
@@ -126,7 +124,7 @@ namespace SoliteraxLibrary.Soliterax_Hub
                         _clientSocket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, new AsyncCallback(ServerMessageCallBack), _clientSocket);
                         isConnected = true;
                     }
-                    catch(SocketException)
+                    catch (SocketException)
                     {
                         isConnected = false;
                     }
@@ -135,14 +133,14 @@ namespace SoliteraxLibrary.Soliterax_Hub
             }
         }
 
-       
+
         //Getter And Setter
-        
+
         public int getPort()
         {
             return Port;
         }
-            
+
         public string getServer_IP()
         {
             return Server_IP;

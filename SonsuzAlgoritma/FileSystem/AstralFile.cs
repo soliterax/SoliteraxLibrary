@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using System.Windows.Forms;
 
 namespace SoliteraxLibrary.FileSystem
 {
@@ -51,7 +48,7 @@ namespace SoliteraxLibrary.FileSystem
             }
         }
 
-        public  string Read(string data)
+        public string Read(string data)
         {
 
             //Geçici listeye eklenecek değerin depolandığı yer

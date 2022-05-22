@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data.SqlClient;
 
 namespace SoliteraxLibrary.SQLSystem
@@ -16,7 +12,7 @@ namespace SoliteraxLibrary.SQLSystem
             connection = sql;
         }
         #region SendData
-        
+
         /// <summary>
         /// Send sql command and change sql server databases
         /// </summary>
@@ -29,7 +25,14 @@ namespace SoliteraxLibrary.SQLSystem
 
             command.ExecuteNonQuery();
             command.Dispose();
-            
+
+        }
+
+        public void SendData(SqlCommand data)
+        {
+            data.Connection = connection.GetConnection();
+            data.ExecuteNonQuery();
+            data.Dispose();
         }
         #endregion
 
@@ -121,7 +124,7 @@ namespace SoliteraxLibrary.SQLSystem
             cCommand.Dispose();
 
             return returnValue;
-        } 
+        }
         #endregion
 
         public class SQLCondition
