@@ -37,7 +37,7 @@ namespace SoliteraxControlLibrary
             {
                 using (GraphicsPath pathGurface = GetFigurePath(rectSurface, BORDER_RADIUS))
                 using (GraphicsPath pathBorder = GetFigurePath(rectBorder, BORDER_RADIUS - 1F))
-                using (Pen penSurface = new Pen(this.BackColor, 2))
+                using (Pen penSurface = new Pen(this.Parent.BackColor, 2))
                 using (Pen penBorder = new Pen(BORDER_COLOR, BORDER_SIZE))
                 {
                     penBorder.Alignment = PenAlignment.Inset;

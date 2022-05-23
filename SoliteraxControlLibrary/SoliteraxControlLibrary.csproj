@@ -49,6 +49,9 @@
     <Compile Include="CustomButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="CustomComboBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="CustomContextMenuStrip.cs">
       <SubType>Component</SubType>
     </Compile>
