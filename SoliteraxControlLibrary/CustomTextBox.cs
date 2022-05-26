@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,350 +14,365 @@ namespace SoliteraxControlLibrary
     public class CustomTextBox : UserControl
     {
 
-        private TextBox txt = new TextBox();
+        TextBox textBox1;
 
-        #region Member Variables
-        Color waterMarkColor = Color.Gray;
-        Color forecolor;
-        Font font;
-        Font waterMarkFont;
-        string waterMarkText = "Your Text Here";
-        private Color BORDER_COLOR = Color.White;
-        private Color BORDER_FOCUS_COLOR = Color.White;
-        private int BORDER_SIZE = 2;
-        private bool UNDERLINESTYLE = false;
-        private bool ISFOCUSED = false;
-        #endregion
-        #region Constructor
         public CustomTextBox()
         {
-            this.Size = new Size(250, 30);
-            this.ForeColor = Color.DimGray;
-            this.Font = new Font(this.Font.FontFamily, 9.5f, this.Font.Style);
-            this.AutoScaleMode = AutoScaleMode.None;
-            this.Padding = new Padding(7, 7, 7, 7);
-
-            txt.Dock = DockStyle.Fill;
-            txt.BorderStyle = BorderStyle.None;
-            txt.BackColor = this.BackColor;
-            txt.TextChanged += Txt_TextChanged;
-            txt.Enter += Txt_Enter;
-            txt.MouseEnter += Txt_MouseEnter;
-            txt.MouseLeave += Txt_MouseLeave;
-            txt.Leave += Txt_Leave;
-
-            this.Controls.Add(txt);
-            //event handlers
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.SuspendLayout();
+            // 
+            // textBox1
+            // 
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox1.Location = new System.Drawing.Point(10, 7);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(230, 15);
+            this.textBox1.TabIndex = 0;
+            this.textBox1.Click += new System.EventHandler(this.textBox1_Click);
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox1.Enter += new System.EventHandler(this.textBox1_Enter);
+            this.textBox1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBox1_KeyPress);
+            this.textBox1.Leave += new System.EventHandler(this.textBox1_Leave);
+            this.textBox1.MouseEnter += new System.EventHandler(this.textBox1_MouseEnter);
+            this.textBox1.MouseLeave += new System.EventHandler(this.textBox1_MouseLeave);
+            // 
+            // RJTextBox
+            // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.BackColor = System.Drawing.SystemColors.Window;
+            this.Controls.Add(this.textBox1);
+            this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "RJTextBox";
+            this.Padding = new System.Windows.Forms.Padding(10, 7, 10, 7);
+            this.Size = new System.Drawing.Size(250, 30);
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
-        private void Txt_Leave(object sender, EventArgs e)
-        {
-            ISFOCUSED = false;
-            this.Invalidate();
-        }
+        private Color borderColor = Color.MediumSlateBlue;
+        private Color borderFocusColor = Color.HotPink;
+        private int borderSize = 2;
+        private bool underlinedStyle = false;
+        private bool isFocused = false;
+        private int borderRadius = 0;
+        private Color placeholderColor = Color.DarkGray;
+        private string placeholderText = "";
+        private bool isPlaceholder = false;
+        private bool isPasswordChar = false;
 
-        private void Txt_MouseLeave(object sender, EventArgs e)
+        #region -> Private methods
+        private void SetPlaceholder()
         {
-            this.OnMouseLeave(e);
+            if (string.IsNullOrWhiteSpace(textBox1.Text) && placeholderText != "")
+            {
+                isPlaceholder = true;
+                textBox1.Text = placeholderText;
+                textBox1.ForeColor = placeholderColor;
+                if (isPasswordChar)
+                    textBox1.UseSystemPasswordChar = false;
+            }
         }
-
-        private void Txt_MouseEnter(object sender, EventArgs e)
+        private void RemovePlaceholder()
         {
-            this.OnMouseEnter(e);
+            if (isPlaceholder && placeholderText != "")
+            {
+                isPlaceholder = false;
+                textBox1.Text = "";
+                textBox1.ForeColor = this.ForeColor;
+                if (isPasswordChar)
+                    textBox1.UseSystemPasswordChar = true;
+            }
         }
-
-        private void Txt_Enter(object sender, EventArgs e)
+        private GraphicsPath GetFigurePath(Rectangle rect, int radius)
         {
-            ISFOCUSED = true;
-            this.Invalidate();
+            GraphicsPath path = new GraphicsPath();
+            float curveSize = radius * 2F;
+            path.StartFigure();
+            path.AddArc(rect.X, rect.Y, curveSize, curveSize, 180, 90);
+            path.AddArc(rect.Right - curveSize, rect.Y, curveSize, curveSize, 270, 90);
+            path.AddArc(rect.Right - curveSize, rect.Bottom - curveSize, curveSize, curveSize, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - curveSize, curveSize, curveSize, 90, 90);
+            path.CloseFigure();
+            return path;
         }
-
-        private void Txt_TextChanged(object sender, EventArgs e)
+        private void SetTextBoxRoundedRegion()
         {
-            if (_TextChanged != null)
-                _TextChanged.Invoke(sender, e);
+            GraphicsPath pathTxt;
+            if (Multiline)
+            {
+                pathTxt = GetFigurePath(textBox1.ClientRectangle, borderRadius - borderSize);
+                textBox1.Region = new Region(pathTxt);
+            }
+            else
+            {
+                pathTxt = GetFigurePath(textBox1.ClientRectangle, borderSize * 2);
+                textBox1.Region = new Region(pathTxt);
+            }
+            pathTxt.Dispose();
+        }
+        private void UpdateControlHeight()
+        {
+            if (textBox1.Multiline == false)
+            {
+                int txtHeight = TextRenderer.MeasureText("Text", this.Font).Height + 1;
+                textBox1.Multiline = true;
+                textBox1.MinimumSize = new Size(0, txtHeight);
+                textBox1.Multiline = false;
+                this.Height = textBox1.Height + this.Padding.Top + this.Padding.Bottom;
+            }
         }
         #endregion
 
-        #region Overrided Methods
-
-        protected override void OnPaint(PaintEventArgs e)
+        #region -> Properties
+        [Category("Soliterax Control Library")]
+        public Color BorderColor
         {
-            base.OnPaint(e);
-            Graphics graph = e.Graphics;
-
-            using(Pen penBorder = new Pen(BORDER_COLOR, BORDER_SIZE))
+            get { return borderColor; }
+            set
             {
-                penBorder.Alignment = System.Drawing.Drawing2D.PenAlignment.Inset;
-
-                if (!ISFOCUSED)
+                borderColor = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public Color BorderFocusColor
+        {
+            get { return borderFocusColor; }
+            set { borderFocusColor = value; }
+        }
+        [Category("Soliterax Control Library")]
+        public int BorderSize
+        {
+            get { return borderSize; }
+            set
+            {
+                if (value >= 1)
                 {
-                    if (UNDERLINESTYLE)
-                        graph.DrawLine(penBorder, 0, this.Height - 1, this.Width, this.Height - 1);
-                    else
-                        graph.DrawRectangle(penBorder, 0, 0, this.Width - 0.5F, this.Height - 0.5F);
-                }
-                else
-                {
-                    penBorder.Color = BorderFocusColor;
-                    if (UNDERLINESTYLE)
-                        graph.DrawLine(penBorder, 0, this.Height - 1, this.Width, this.Height - 1);
-                    else
-                        graph.DrawRectangle(penBorder, 0, 0, this.Width - 0.5F, this.Height - 0.5F);
+                    borderSize = value;
+                    this.Invalidate();
                 }
             }
         }
+        [Category("Soliterax Control Library")]
+        public bool UnderlinedStyle
+        {
+            get { return underlinedStyle; }
+            set
+            {
+                underlinedStyle = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public bool PasswordChar
+        {
+            get { return isPasswordChar; }
+            set
+            {
+                isPasswordChar = value;
+                if (!isPlaceholder)
+                    textBox1.UseSystemPasswordChar = value;
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public bool Multiline
+        {
+            get { return textBox1.Multiline; }
+            set { textBox1.Multiline = value; }
+        }
+        [Category("Soliterax Control Library")]
+        public override Color BackColor
+        {
+            get { return base.BackColor; }
+            set
+            {
+                base.BackColor = value;
+                textBox1.BackColor = value;
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public override Color ForeColor
+        {
+            get { return base.ForeColor; }
+            set
+            {
+                base.ForeColor = value;
+                textBox1.ForeColor = value;
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                base.Font = value;
+                textBox1.Font = value;
+                if (this.DesignMode)
+                    UpdateControlHeight();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public string Texts
+        {
+            get
+            {
+                if (isPlaceholder) return "";
+                else return textBox1.Text;
+            }
+            set
+            {
+                textBox1.Text = value;
+                SetPlaceholder();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public int BorderRadius
+        {
+            get { return borderRadius; }
+            set
+            {
+                if (value >= 0)
+                {
+                    borderRadius = value;
+                    this.Invalidate();//Redraw control
+                }
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public Color PlaceholderColor
+        {
+            get { return placeholderColor; }
+            set
+            {
+                placeholderColor = value;
+                if (isPlaceholder)
+                    textBox1.ForeColor = value;
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public string PlaceholderText
+        {
+            get { return placeholderText; }
+            set
+            {
+                placeholderText = value;
+                textBox1.Text = "";
+                SetPlaceholder();
+            }
+        }
+        #endregion
 
+        #region -> Overridden methods
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
-            if(DesignMode)
+            if (this.DesignMode)
                 UpdateControlHeight();
         }
-
-        private void UpdateControlHeight()
-        {
-            if(txt.Multiline == false)
-            {
-                int txtHeight = TextRenderer.MeasureText("Text", this.Font).Height + 1;
-                txt.Multiline = true;
-                txt.MinimumSize = new Size(0, txtHeight);
-                txt.Multiline = false;
-
-                this.Height = txt.Height + this.Padding.Top + this.Padding.Bottom;
-            }
-        }
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             UpdateControlHeight();
         }
-
-        #endregion
-
-        #region User Defined Properties
-        /*/// <summary>
-        /// Property to set/get Watermark color at design/runtime
-        /// </summary>
-        [Browsable(true)]
-        [Category("Soliterax Control Library")]
-        [Description("sets Watermark color")]
-        [DisplayName("WaterMark Color")]
-        public Color WaterMarkColor
+        protected override void OnPaint(PaintEventArgs e)
         {
-            get
+            base.OnPaint(e);
+            Graphics graph = e.Graphics;
+            if (borderRadius > 1)//Rounded TextBox
             {
-                return this.waterMarkColor;
+                //-Fields
+                var rectBorderSmooth = this.ClientRectangle;
+                var rectBorder = Rectangle.Inflate(rectBorderSmooth, -borderSize, -borderSize);
+                int smoothSize = borderSize > 0 ? borderSize : 1;
+                using (GraphicsPath pathBorderSmooth = GetFigurePath(rectBorderSmooth, borderRadius))
+                using (GraphicsPath pathBorder = GetFigurePath(rectBorder, borderRadius - borderSize))
+                using (Pen penBorderSmooth = new Pen(this.Parent.BackColor, smoothSize))
+                using (Pen penBorder = new Pen(borderColor, borderSize))
+                {
+                    //-Drawing
+                    this.Region = new Region(pathBorderSmooth);//Set the rounded region of UserControl
+                    if (borderRadius > 15) SetTextBoxRoundedRegion();//Set the rounded region of TextBox component
+                    graph.SmoothingMode = SmoothingMode.AntiAlias;
+                    penBorder.Alignment = System.Drawing.Drawing2D.PenAlignment.Center;
+                    if (isFocused) penBorder.Color = borderFocusColor;
+                    if (underlinedStyle) //Line Style
+                    {
+                        //Draw border smoothing
+                        graph.DrawPath(penBorderSmooth, pathBorderSmooth);
+                        //Draw border
+                        graph.SmoothingMode = SmoothingMode.None;
+                        graph.DrawLine(penBorder, 0, this.Height - 1, this.Width, this.Height - 1);
+                    }
+                    else //Normal Style
+                    {
+                        //Draw border smoothing
+                        graph.DrawPath(penBorderSmooth, pathBorderSmooth);
+                        //Draw border
+                        graph.DrawPath(penBorder, pathBorder);
+                    }
+                }
             }
-            set
+            else //Square/Normal TextBox
             {
-                this.waterMarkColor = value;
-                base.OnTextChanged(new EventArgs());
-            }
-        }
-        [Browsable(true)]
-        [Category("Extended Properties")]
-        [Description("sets TextBox text")]
-        [DisplayName("Text")]
-        /// <summary>
-        /// Property to get Text at runtime(hides base Text property)
-        /// </summary>
-        public new string Text
-        {
-            get
-            {
-                //required for validation for Text property
-                return base.Text.Replace(this.waterMarkText, string.Empty);
-            }
-            set
-            {
-                base.Text = value;
-            }
-        }
-        [Browsable(true)]
-        [Category("Soliterax Control Library")]
-        [Description("sets WaterMark font")]
-        [DisplayName("WaterMark Font")]
-        /// <summary>
-        /// Property to get Text at runtime(hides base Text property) 
-        /// </summary>
-        public Font WaterMarkFont
-        {
-            get
-            {
-                //required for validation for Text property
-                return this.waterMarkFont;
-            }
-            set
-            {
-                this.waterMarkFont = value;
-                this.OnTextChanged(new EventArgs());
-            }
-        }
-        /// <summary>
-        ///  Property to set/get Watermark text at design/runtime
-        /// </summary>
-        [Browsable(true)]
-        [Category("Soliterax Control Library")]
-        [Description("sets Watermark Text")]
-        [DisplayName("WaterMark Text")]
-        public string WaterMarkText
-        {
-            get
-            {
-                return this.waterMarkText;
-            }
-            set
-            {
-                this.waterMarkText = value;
-                base.OnTextChanged(new EventArgs());
-            }
-        }
-        */
-        [Browsable(true)]
-        [Category("Soliterax Control Library")]
-        [Description("Set Border Color")]
-        [DisplayName("Border Color")]
-        public Color BorderColor
-        {
-            get
-            {
-                return BORDER_COLOR;
-            }
-            set
-            {
-                this.BORDER_COLOR = value;
-                this.Invalidate();
-            }
-        }
-
-        [Browsable(true)]
-        [Category("Soliterax Control Library")]
-        [Description("Set Border Focus Color")]
-        [DisplayName("Border Focus Color")]
-        public Color BorderFocusColor
-        {
-            get
-            {
-                return this.BORDER_FOCUS_COLOR;
-            }
-            set
-            {
-                this.BORDER_FOCUS_COLOR = value;
-            }
-        }
-
-        [Browsable(true)]
-        [Category("Soliterax Control Library")]
-        [Description("Set Border Size")]
-        [DisplayName("Border Size")]
-        public int BorderSize
-        {
-            get
-            {
-                return BORDER_SIZE;
-            }
-            set
-            {
-                this.BORDER_SIZE = value;
-                this.Invalidate();
-            }
-        }
-
-        [Browsable(true)]
-        [Category("Soliterax Control Library")]
-        [Description("Set Under Line Style")]
-        [DisplayName("Under Line Style")]
-        public bool UnderLineStyle
-        {
-            get
-            {
-                return UNDERLINESTYLE;
-            }
-            set
-            {
-                this.UNDERLINESTYLE = value;
-                this.Invalidate();
-            }
-        }
-
-        [Category("Soliterax Control Library")]
-        public bool PasswordChar
-        {
-            get { return txt.UseSystemPasswordChar; }
-            set { txt.UseSystemPasswordChar = value; }
-        }
-
-        [Category("Soliterax Control Library")]
-        public bool MultiLine
-        {
-            get { return txt.Multiline; }
-            set { txt.Multiline = value; }
-        }
-
-        [Category("Soliterax Control Library")]
-        public override Color BackColor { 
-            get
-            {
-                return base.BackColor;
-            } 
-            set
-            {
-                base.BackColor = value;
-                txt.BackColor = value;
-            }
-        }
-
-        [Category("Soliterax Control Library")]
-        public override Color ForeColor
-        {
-            get
-            {
-                return base.ForeColor;
-            }
-            set
-            {
-                base.ForeColor = value;
-                txt.ForeColor = value;
-            }
-        }
-
-        [Category("Soliterax Control Library")]
-        public override Font Font
-        {
-            get
-            {
-                return base.Font;
-            }
-            set
-            {
-                base.Font = value;
-                txt.Font = value;
-                if (this.DesignMode)
-                    UpdateControlHeight();
-            }
-        }
-
-        [Browsable(true)]
-        [Category("Soliterax Control Library")]
-        [Description("Set Text Box Value")]
-        [DisplayName("Text Box Value")]
-        public string TextValue { 
-            get
-            {
-                return txt.Text;
-            }
-            set
-            {
-                txt.Text = value;
+                //Draw border
+                using (Pen penBorder = new Pen(borderColor, borderSize))
+                {
+                    this.Region = new Region(this.ClientRectangle);
+                    penBorder.Alignment = System.Drawing.Drawing2D.PenAlignment.Inset;
+                    if (isFocused) penBorder.Color = borderFocusColor;
+                    if (underlinedStyle) //Line Style
+                        graph.DrawLine(penBorder, 0, this.Height - 1, this.Width, this.Height - 1);
+                    else //Normal Style
+                        graph.DrawRectangle(penBorder, 0, 0, this.Width - 0.5F, this.Height - 0.5F);
+                }
             }
         }
         #endregion
 
-        #region Events
         public event EventHandler _TextChanged;
-        #endregion
+        //TextBox-> TextChanged event
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (_TextChanged != null)
+                _TextChanged.Invoke(sender, e);
+        }
 
+        private void textBox1_Enter(object sender, EventArgs e)
+        {
+            isFocused = true;
+            this.Invalidate();
+            RemovePlaceholder();
+        }
+
+        private void textBox1_Leave(object sender, EventArgs e)
+        {
+            isFocused = false;
+            this.Invalidate();
+            SetPlaceholder();
+        }
+
+        private void textBox1_Click(object sender, EventArgs e)
+        {
+            this.OnClick(e);
+        }
+
+        private void textBox1_MouseEnter(object sender, EventArgs e)
+        {
+            this.OnMouseEnter(e);
+        }
+
+        private void textBox1_MouseLeave(object sender, EventArgs e)
+        {
+            this.OnMouseLeave(e);
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            this.OnKeyPress(e);
+        }
     }
 }

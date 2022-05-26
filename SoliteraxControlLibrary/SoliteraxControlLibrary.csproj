@@ -52,7 +52,10 @@
     <Compile Include="CustomComboBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CustomContextMenuStrip.cs">
+    <Compile Include="CustomDateTimePicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CustomDropDownMenu.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="CustomLabel.cs">
@@ -71,6 +74,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\MenuColorTable.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

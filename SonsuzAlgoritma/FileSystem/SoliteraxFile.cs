@@ -112,6 +112,16 @@ namespace SoliteraxLibrary.FileSystem
 
         }
 
+        public string[] ReadAllLines()
+        {
+            using(StreamReader sr = new StreamReader(path))
+            {
+                string[] all = sr.ReadToEnd().Replace(Environment.NewLine, "$").Split('$');
+                sr.Close();
+                return all;
+            }
+        }
+
         public string Read(int satir)
         {
             using (StreamReader reader = new StreamReader(path))
@@ -119,7 +129,7 @@ namespace SoliteraxLibrary.FileSystem
                 List<string> all = new List<string>();
                 string allraw = reader.ReadToEnd();
                 allraw = allraw.Replace(Environment.NewLine, "$");
-
+                
                 string test = "";
                 for (int i = 0; i < allraw.ToCharArray().Length; i++)
                 {

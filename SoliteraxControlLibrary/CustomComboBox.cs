@@ -14,156 +14,232 @@ namespace SoliteraxControlLibrary
     [DefaultEvent("OnSelectedIndexChanged")]
     public class CustomComboBox : UserControl
     {
+        //Fields
+        private Color backColor = Color.WhiteSmoke;
+        private Color iconColor = Color.MediumSlateBlue;
+        private Color listBackColor = Color.FromArgb(230, 228, 245);
+        private Color listTextColor = Color.DimGray;
+        private Color borderColor = Color.MediumSlateBlue;
+        private int borderSize = 1;
+        //Items
+        private ComboBox cmbList;
+        private Label lblText;
+        private Button btnIcon;
+        //Events
+        public event EventHandler OnSelectedIndexChanged;//Default event
 
-        private Color BACKCOLOR = Color.White;
-        private Color ICONCOLOR = Color.Green;
-        private Color LISTBACKCOLOR = Color.Blue;
-        private Color LISTTEXTCOLOR = Color.Black;
-        private Color BORDERCOLOR = Color.Green;
-        private Padding BORDERSIZE = new Padding(1,1,1,1);
-
-        [Category("Soliterax Control Library - Item")]
-        public Color BackColor
+        //Constructor
+        public CustomComboBox()
         {
-            get
+            cmbList = new ComboBox();
+            lblText = new Label();
+            btnIcon = new Button();
+            this.SuspendLayout();
+            //ComboBox: Dropdown list
+            cmbList.BackColor = listBackColor;
+            cmbList.Font = new Font(this.Font.Name, 10F);
+            cmbList.ForeColor = listTextColor;
+            cmbList.SelectedIndexChanged += new EventHandler(ComboBox_SelectedIndexChanged);//Default event
+            cmbList.TextChanged += new EventHandler(ComboBox_TextChanged);//Refresh text
+                                                                          //Button: Icon
+            btnIcon.Dock = DockStyle.Right;
+            btnIcon.FlatStyle = FlatStyle.Flat;
+            btnIcon.FlatAppearance.BorderSize = 0;
+            btnIcon.BackColor = backColor;
+            btnIcon.Size = new Size(30, 30);
+            btnIcon.Cursor = Cursors.Hand;
+            btnIcon.Click += new EventHandler(Icon_Click);//Open dropdown list
+            btnIcon.Paint += new PaintEventHandler(Icon_Paint);//Draw icon
+                                                               //Label: Text
+            lblText.Dock = DockStyle.Fill;
+            lblText.AutoSize = false;
+            lblText.BackColor = backColor;
+            lblText.TextAlign = ContentAlignment.MiddleLeft;
+            lblText.Padding = new Padding(8, 0, 0, 0);
+            lblText.Font = new Font(this.Font.Name, 10F);
+            //->Attach label events to user control event
+            lblText.Click += new EventHandler(Surface_Click);//Select combo box
+            lblText.MouseEnter += new EventHandler(Surface_MouseEnter);
+            lblText.MouseLeave += new EventHandler(Surface_MouseLeave);
+            //User Control
+            this.Controls.Add(lblText);//2
+            this.Controls.Add(btnIcon);//1
+            this.Controls.Add(cmbList);//0
+            this.MinimumSize = new Size(200, 30);
+            this.Size = new Size(200, 30);
+            this.ForeColor = Color.DimGray;
+            this.Padding = new Padding(borderSize);//Border Size
+            this.Font = new Font(this.Font.Name, 10F);
+            base.BackColor = borderColor; //Border Color
+            this.ResumeLayout();
+            AdjustComboBoxDimensions();
+        }
+
+        //Private methods
+        private void AdjustComboBoxDimensions()
+        {
+            cmbList.Width = lblText.Width;
+            cmbList.Location = new Point()
             {
-                return BACKCOLOR;
-            }
-            set
+                X = this.Width - this.Padding.Right - cmbList.Width,
+                Y = lblText.Bottom - cmbList.Height
+            };
+        }
+
+        //Event methods
+        //-> Default event
+        private void ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (OnSelectedIndexChanged != null)
+                OnSelectedIndexChanged.Invoke(sender, e);
+            //Refresh text
+            lblText.Text = cmbList.Text;
+        }
+        //-> Items actions
+        private void Icon_Click(object sender, EventArgs e)
+        {
+            //Open dropdown list
+            cmbList.Select();
+            cmbList.DroppedDown = true;
+        }
+        private void Surface_Click(object sender, EventArgs e)
+        {
+            //Attach label click to user control click
+            this.OnClick(e);
+            //Select combo box
+            cmbList.Select();
+            if (cmbList.DropDownStyle == ComboBoxStyle.DropDownList)
+                cmbList.DroppedDown = true;//Open dropdown list
+        }
+        private void ComboBox_TextChanged(object sender, EventArgs e)
+        {
+            //Refresh text
+            lblText.Text = cmbList.Text;
+        }
+
+        //-> Draw icon
+        private void Icon_Paint(object sender, PaintEventArgs e)
+        {
+            //Fields
+            int iconWidht = 14;
+            int iconHeight = 6;
+            var rectIcon = new Rectangle((btnIcon.Width - iconWidht) / 2, (btnIcon.Height - iconHeight) / 2, iconWidht, iconHeight);
+            Graphics graph = e.Graphics;
+            //Draw arrow down icon
+            using (GraphicsPath path = new GraphicsPath())
+            using (Pen pen = new Pen(iconColor, 2))
             {
-                this.BACKCOLOR = value;
-                lblTxt.BackColor = value;
-                btnIcon.BackColor = value;
+                graph.SmoothingMode = SmoothingMode.AntiAlias;
+                path.AddLine(rectIcon.X, rectIcon.Y, rectIcon.X + (iconWidht / 2), rectIcon.Bottom);
+                path.AddLine(rectIcon.X + (iconWidht / 2), rectIcon.Bottom, rectIcon.Right, rectIcon.Y);
+                graph.DrawPath(pen, path);
             }
         }
 
-        [Category("Soliterax Control Library - Item")]
+        //Properties
+        //-> Appearance
+        [Category("Soliterax Control Library - Appearance")]
+        public new Color BackColor
+        {
+            get { return backColor; }
+            set
+            {
+                backColor = value;
+                lblText.BackColor = backColor;
+                btnIcon.BackColor = backColor;
+            }
+        }
+        [Category("Soliterax Control Library - Appearance")]
         public Color IconColor
         {
-            get
-            {
-                return ICONCOLOR;
-            }
+            get { return iconColor; }
             set
             {
-                this.ICONCOLOR = value;
-                btnIcon.Invalidate();
+                iconColor = value;
+                btnIcon.Invalidate();//Redraw icon
             }
         }
-
-        [Category("Soliterax Control Library - Item")]
+        [Category("Soliterax Control Library - Appearance")]
         public Color ListBackColor
         {
-            get
-            {
-                return LISTBACKCOLOR;
-            }
+            get { return listBackColor; }
             set
             {
-                this.LISTBACKCOLOR = value;
-                cmbList.BackColor = value;
+                listBackColor = value;
+                cmbList.BackColor = listBackColor;
             }
         }
-
-        [Category("Soliterax Control Library - Item")]
+        [Category("Soliterax Control Library - Appearance")]
         public Color ListTextColor
         {
-            get
-            {
-                return LISTTEXTCOLOR;
-            }
+            get { return listTextColor; }
             set
             {
-                this.LISTTEXTCOLOR = value;
-                cmbList.ForeColor = value;
+                listTextColor = value;
+                cmbList.ForeColor = listTextColor;
             }
         }
-
-        [Category("Soliterax Control Library - Item")]
+        [Category("Soliterax Control Library - Appearance")]
         public Color BorderColor
         {
-            get
-            {
-                return BORDERCOLOR;
-            }
+            get { return borderColor; }
             set
             {
-                this.BORDERCOLOR = value;
-                base.BackColor = value;
+                borderColor = value;
+                base.BackColor = borderColor; //Border Color
             }
         }
-
-        [Category("Soliterax Control Library - Item")]
-        public Padding BorderSize
+        [Category("Soliterax Control Library - Appearance")]
+        public int BorderSize
         {
-            get
-            {
-                return BORDERSIZE;
-            }
+            get { return borderSize; }
             set
             {
-                this.BORDERSIZE = value;
-                this.Padding = value;
+                borderSize = value;
+                this.Padding = new Padding(borderSize);//Border Size
+                AdjustComboBoxDimensions();
             }
         }
-
-        [Category("Soliterax Control Library - Item")]
+        [Category("Soliterax Control Library - Appearance")]
         public override Color ForeColor
         {
-            get
-            {
-                return base.ForeColor;
-            }
+            get { return base.ForeColor; }
             set
             {
                 base.ForeColor = value;
-                lblTxt.ForeColor = value;
+                lblText.ForeColor = value;
             }
         }
-
-        [Category("Soliterax Control Library - Item")]
+        [Category("Soliterax Control Library - Appearance")]
         public override Font Font
         {
-            get
-            {
-                return base.Font;
-            }
+            get { return base.Font; }
             set
             {
                 base.Font = value;
-                lblTxt.Font = value;
-                cmbList.Font = value;
+                lblText.Font = value;
+                cmbList.Font = value;//Optional
             }
         }
-
-        [Category("Soliterax Control Library - Item")]
+        [Category("Soliterax Control Library - Appearance")]
         public string Texts
         {
-            get
-            {
-                return lblTxt.Text;
-            }
-            set
-            {
-                lblTxt.Text = value;
-            }
+            get { return lblText.Text; }
+            set { lblText.Text = value; }
         }
-
-        [Category("Soliterax Control Library - Item")]
+        [Category("Soliterax Control Library - Appearance")]
         public ComboBoxStyle DropDownStyle
         {
-            get
-            {
-                return cmbList.DropDownStyle;
-            }
+            get { return cmbList.DropDownStyle; }
             set
             {
-                if(cmbList.DropDownStyle != ComboBoxStyle.Simple)
+                if (cmbList.DropDownStyle != ComboBoxStyle.Simple)
                     cmbList.DropDownStyle = value;
             }
         }
 
-        //Data
+        //Properties
+        //-> Data
         [Category("Soliterax Control Library - Data")]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [Editor("System.Windows.Forms.Design.ListControlStringCollectionEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(UITypeEditor))]
@@ -245,123 +321,18 @@ namespace SoliteraxControlLibrary
             set { cmbList.ValueMember = value; }
         }
 
-        private ComboBox cmbList;
-        private Label lblTxt;
-        private Button btnIcon;
-
-        public event EventHandler OnSelectedIndexChanged;
-
-        public CustomComboBox()
-        {
-            cmbList = new ComboBox();
-            lblTxt = new Label();
-            btnIcon = new Button();
-
-            cmbList.BackColor = BACKCOLOR;
-            cmbList.Font = new Font(this.Font.Name, 10F);
-            cmbList.ForeColor = LISTTEXTCOLOR;
-            cmbList.SelectedIndexChanged += new EventHandler(ComboBox_SelectedIndex_Changed);
-            cmbList.TextChanged += new EventHandler(ComboBox_TextChanged);
-
-            btnIcon.Dock = DockStyle.Right;
-            btnIcon.FlatStyle = FlatStyle.Flat;
-            btnIcon.FlatAppearance.BorderSize = 0;
-            btnIcon.BackColor = BACKCOLOR;
-            btnIcon.Size = new Size(30, 30);
-            btnIcon.Cursor = Cursors.Hand;
-            btnIcon.Click += new EventHandler(Icon_Click);
-            btnIcon.Paint += new PaintEventHandler(Icon_Paint);
-
-            lblTxt.Dock = DockStyle.Fill;
-            lblTxt.AutoSize = false;
-            lblTxt.BackColor = BACKCOLOR;
-            lblTxt.TextAlign = ContentAlignment.MiddleLeft;
-            lblTxt.Padding = new Padding(0, 0, 0, 0);
-            lblTxt.Font = new Font(this.Font.Name, 10F);
-            lblTxt.Click += new EventHandler(Surface_Click);
-            lblTxt.MouseEnter += new EventHandler(Surface_MouseEnter);
-            lblTxt.MouseLeave += new EventHandler(Surface_MouseLeave);
-
-            this.Controls.Add(lblTxt);
-            this.Controls.Add(btnIcon);
-            this.Controls.Add(cmbList);
-
-            this.MinimumSize = new Size(200, 30);
-            this.Size = new Size(200, 30);
-            this.ForeColor = Color.DimGray;
-            this.Padding = BORDERSIZE;
-            this.BackColor = BORDERCOLOR;
-            this.ResumeLayout();
-            AdjustComboBoxDimensions();
-        }
-
+        //->Attach label events to user control event
         private void Surface_MouseLeave(object sender, EventArgs e)
         {
             this.OnMouseLeave(e);
         }
-
         private void Surface_MouseEnter(object sender, EventArgs e)
         {
             this.OnMouseEnter(e);
         }
+        //::::+
 
-        private void AdjustComboBoxDimensions()
-        {
-            cmbList.Width = lblTxt.Width;
-            cmbList.Location = new Point()
-            {
-                X = this.Width - this.Padding.Right - cmbList.Width,
-                Y = lblTxt.Bottom - cmbList.Right
-            };
-        }
-
-        private void Surface_Click(object sender, EventArgs e)
-        {
-            this.OnClick(e);
-
-            cmbList.Select();
-            if (cmbList.DropDownStyle == ComboBoxStyle.DropDownList)
-                cmbList.DroppedDown = true;
-        }
-
-        private void Icon_Paint(object sender, PaintEventArgs e)
-        {
-            //Fields
-            int iconWidth = 14;
-            int iconHeight = 6;
-            var rectIcon = new Rectangle((btnIcon.Width - iconWidth) / 2, (btnIcon.Height - iconHeight) / 2, iconWidth, iconHeight);
-            Graphics graph = e.Graphics;
-
-            using(GraphicsPath path = new GraphicsPath())
-                using(Pen pen = new Pen(ICONCOLOR, 2))
-            {
-                graph.SmoothingMode = SmoothingMode.AntiAlias;
-                
-                path.AddLine(rectIcon.X, rectIcon.Y, rectIcon.X + (iconWidth / 2), rectIcon.Bottom);
-                path.AddLine(rectIcon.X + (iconWidth / 2), rectIcon.Bottom, rectIcon.Right, rectIcon.Y);
-                graph.DrawPath(pen, path);
-            }
-        }
-
-        private void Icon_Click(object sender, EventArgs e)
-        {
-            cmbList.Select();
-            cmbList.DroppedDown = true;
-        }
-
-        private void ComboBox_TextChanged(object sender, EventArgs e)
-        {
-            lblTxt.Text = cmbList.Text;
-        }
-
-        private void ComboBox_SelectedIndex_Changed(object sender, EventArgs e)
-        {
-            if (OnSelectedIndexChanged != null)
-                OnSelectedIndexChanged.Invoke(sender, e);
-
-            lblTxt.Text = cmbList.Text;
-        }
-
+        //Overridden methods
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);

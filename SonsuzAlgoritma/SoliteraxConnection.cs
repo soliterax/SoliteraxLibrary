@@ -7,7 +7,7 @@ namespace SoliteraxLibrary
     public class SoliteraxConnection
     {
 
-        ConnectSQL sql;
+        ConnectDatabase database;
         Server server;
         Client client;
         ConnectionType type;
@@ -22,12 +22,16 @@ namespace SoliteraxLibrary
             switch (type)
             {
                 case ConnectionType.SQL:
-                    sql = new ConnectSQL(connectionString);
-                    sql.Connect();
+                    database = new ConnectDatabase(connectionString, type);
+                    database.Connect();
                     break;
                 case ConnectionType.Server:
                     break;
                 case ConnectionType.Client:
+                    break;
+                case ConnectionType.Access:
+                    database = new ConnectDatabase(connectionString, type);
+                    database.Connect();
                     break;
                 default:
                     return;
@@ -41,11 +45,13 @@ namespace SoliteraxLibrary
             switch (type)
             {
                 case ConnectionType.SQL:
-                    return sql;
+                    return database;
                 case ConnectionType.Server:
                     return server;
                 case ConnectionType.Client:
                     return client;
+                case ConnectionType.Access:
+                    return database;
                 default:
                     return null;
             }
@@ -58,13 +64,16 @@ namespace SoliteraxLibrary
             switch (type)
             {
                 case ConnectionType.SQL:
-                    sql = (ConnectSQL)obj;
+                    database = (ConnectDatabase)obj;
                     break;
                 case ConnectionType.Server:
                     server = (Server)obj;
                     break;
                 case ConnectionType.Client:
                     client = (Client)obj;
+                    break;
+                case ConnectionType.Access:
+                    database = (ConnectDatabase)obj;
                     break;
                 default:
                     return;
@@ -74,7 +83,7 @@ namespace SoliteraxLibrary
 
         public enum ConnectionType
         {
-            SQL, Server, Client
+            SQL, Server, Client, Access
         }
     }
 }

@@ -1,67 +1,138 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.ComponentModel;
 
 namespace SoliteraxControlLibrary
 {
-    [ToolboxBitmap(typeof(CustomButton), "CustomButton.bmp")]
+    
     public class CustomButton : Button
     {
+        //Fields
+        private int borderSize = 0;
+        private int borderRadius = 20;
+        private Color borderColor = Color.PaleVioletRed;
 
-        int BORDER_RADIUS = 0;
-        int BORDER_SIZE = 1;
-        Color BORDER_COLOR = Color.White;
-
-        public CustomButton()
+        //Properties
+        [Category("Soliterax Control Library")]
+        public int BorderSize
         {
-            base.FlatStyle = FlatStyle.Flat;
-            base.BackColor = Color.White;
-            base.ForeColor = Color.Black;
+            get { return borderSize; }
+            set
+            {
+                borderSize = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public int BorderRadius
+        {
+            get { return borderRadius; }
+            set
+            {
+                borderRadius = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public Color BorderColor
+        {
+            get { return borderColor; }
+            set
+            {
+                borderColor = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public Color BackgroundColor
+        {
+            get { return this.BackColor; }
+            set { this.BackColor = value; }
+        }
+        [Category("Soliterax Control Library")]
+        public Color TextColor
+        {
+            get { return this.ForeColor; }
+            set { this.ForeColor = value; }
         }
 
-        protected override void OnPaint(PaintEventArgs e)
+        //Constructor
+        public CustomButton()
         {
-            base.OnPaint(e);
-            e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+            this.FlatStyle = FlatStyle.Flat;
+            this.FlatAppearance.BorderSize = 0;
+            this.Size = new Size(150, 40);
+            this.BackColor = Color.MediumSlateBlue;
+            this.ForeColor = Color.White;
+            this.Resize += new EventHandler(Button_Resize);
+        }
+        private void Button_Resize(object sender, EventArgs e)
+        {
+            if (borderRadius > this.Height)
+                borderRadius = this.Height;
+        }
 
-            RectangleF rectSurface = new RectangleF(0, 0, this.Width, this.Height);
-            RectangleF rectBorder = new RectangleF(1, 1, this.Width - 0.8F, this.Height - 1);
+        //Methods
+        private GraphicsPath GetFigurePath(Rectangle rect, float radius)
+        {
+            GraphicsPath path = new GraphicsPath();
+            float curveSize = radius * 2F;
+            path.StartFigure();
+            path.AddArc(rect.X, rect.Y, curveSize, curveSize, 180, 90);
+            path.AddArc(rect.Right - curveSize, rect.Y, curveSize, curveSize, 270, 90);
+            path.AddArc(rect.Right - curveSize, rect.Bottom - curveSize, curveSize, curveSize, 0, 90);
+            path.AddArc(rect.X, rect.Bottom - curveSize, curveSize, curveSize, 90, 90);
+            path.CloseFigure();
+            return path;
+        }
 
-            if (BORDER_RADIUS > 2)
+        protected override void OnPaint(PaintEventArgs pevent)
+        {
+            base.OnPaint(pevent);
+            Rectangle rectSurface = this.ClientRectangle;
+            Rectangle rectBorder = Rectangle.Inflate(rectSurface, -borderSize, -borderSize);
+            int smoothSize = 2;
+            if (borderSize > 0)
+                smoothSize = borderSize;
+            if (borderRadius > 2) //Rounded button
             {
-                using (GraphicsPath pathGurface = GetFigurePath(rectSurface, BORDER_RADIUS))
-                using (GraphicsPath pathBorder = GetFigurePath(rectBorder, BORDER_RADIUS - 1F))
-                using (Pen penSurface = new Pen(this.Parent.BackColor, 2))
-                using (Pen penBorder = new Pen(BORDER_COLOR, BORDER_SIZE))
+                using (GraphicsPath pathSurface = GetFigurePath(rectSurface, borderRadius))
+                using (GraphicsPath pathBorder = GetFigurePath(rectBorder, borderRadius - borderSize))
+                using (Pen penSurface = new Pen(this.Parent.BackColor, smoothSize))
+                using (Pen penBorder = new Pen(borderColor, borderSize))
                 {
-                    penBorder.Alignment = PenAlignment.Inset;
-                    this.Region = new Region(pathGurface);
-
-                    e.Graphics.DrawPath(penSurface, pathGurface);
-
-                    if (BORDER_SIZE >= 1)
-                        e.Graphics.DrawPath(penBorder, pathBorder);
+                    pevent.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                    //Button surface
+                    this.Region = new Region(pathSurface);
+                    //Draw surface border for HD result
+                    pevent.Graphics.DrawPath(penSurface, pathSurface);
+                    //Button border                    
+                    if (borderSize >= 1)
+                        //Draw control border
+                        pevent.Graphics.DrawPath(penBorder, pathBorder);
                 }
             }
-            else
+            else //Normal button
             {
+                pevent.Graphics.SmoothingMode = SmoothingMode.None;
+                //Button surface
                 this.Region = new Region(rectSurface);
-                if (BORDER_SIZE >= 1)
+                //Button border
+                if (borderSize >= 1)
                 {
-                    using (Pen penBorder = new Pen(BORDER_COLOR, BORDER_SIZE))
+                    using (Pen penBorder = new Pen(borderColor, borderSize))
                     {
                         penBorder.Alignment = PenAlignment.Inset;
-                        e.Graphics.DrawRectangle(penBorder, 0, 0, this.Width - 1, this.Height - 1);
+                        pevent.Graphics.DrawRectangle(penBorder, 0, 0, this.Width - 1, this.Height - 1);
                     }
                 }
             }
-
         }
 
         protected override void OnHandleCreated(EventArgs e)
@@ -69,77 +140,12 @@ namespace SoliteraxControlLibrary
             base.OnHandleCreated(e);
             this.Parent.BackColorChanged += new EventHandler(Container_BackColorChanged);
         }
-
         private void Container_BackColorChanged(object sender, EventArgs e)
         {
-            if (this.DesignMode)
-                this.Invalidate();
+            this.Invalidate();
         }
 
-        public GraphicsPath GetFigurePath(RectangleF rect, float radius)
-        {
 
-            GraphicsPath path = new GraphicsPath();
-            path.StartFigure();
-            path.AddArc(rect.X, rect.Y, radius, radius, 180, 90);
-            path.AddArc(rect.Width - radius, rect.Y, radius, radius, 270, 90);
-            path.AddArc(rect.Width - radius, rect.Height - radius, radius, radius, 0, 90);
-            path.AddArc(rect.X, rect.Height - radius, radius, radius, 90, 90);
-            path.CloseFigure();
 
-            return path;
-
-        }
-
-        [Browsable(true)]
-        [Category("Extended Properties")]
-        [Description("Set Border Color")]
-        [DisplayName("Border Color")]
-        public Color BorderColor
-        {
-            get
-            {
-                return BORDER_COLOR;
-            }
-            set
-            {
-                this.BORDER_COLOR = value;
-                this.Invalidate();
-            }
-        }
-
-        [Browsable(true)]
-        [Category("Extended Properties")]
-        [Description("Set Border Size")]
-        [DisplayName("Border Size")]
-        public int BorderSize
-        {
-            get
-            {
-                return BORDER_SIZE;
-            }
-            set
-            {
-                this.BORDER_SIZE = value;
-                this.Invalidate();
-            }
-        }
-
-        [Browsable(true)]
-        [Category("Extended Properties")]
-        [Description("MAke Border Ellipse")]
-        [DisplayName("Border Radius")]
-        public int BorderRadius
-        {
-            get
-            {
-                return BORDER_RADIUS;
-            }
-            set
-            {
-                this.BORDER_RADIUS = value;
-                this.Invalidate();
-            }
-        }
     }
 }
