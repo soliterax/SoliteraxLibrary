@@ -170,7 +170,7 @@ namespace SoliteraxLibrary.SQLSystem
             {
                 SqlCommand cCommand = new SqlCommand();
                 cCommand.CommandText = command;
-                cCommand.Connection = connection.GetConnection();
+                cCommand.Connection = (SqlConnection)connection.GetConnection();
                 returnValue = cCommand.ExecuteScalar();
                 cCommand.Dispose();
             }

@@ -67,9 +67,9 @@
     <Compile Include="ServerSystem\Soliterax_Plugin.cs" />
     <Compile Include="SoliteraxConnection.cs" />
     <Compile Include="SonsuzLock.cs" />
-    <Compile Include="SQLSystem\ConnectSQL.cs" />
-    <Compile Include="SQLSystem\ManageSQL.cs" />
-    <Compile Include="SQLSystem\StorageSQL.cs" />
+    <Compile Include="SQLSystem\ConnectDatabase.cs" />
+    <Compile Include="SQLSystem\DatabaseManager.cs" />
+    <Compile Include="SQLSystem\DatabaseStorage.cs" />
     <Compile Include="STranslate.cs" />
   </ItemGroup>
   <ItemGroup>

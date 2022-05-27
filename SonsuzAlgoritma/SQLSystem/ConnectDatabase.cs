@@ -37,7 +37,7 @@ namespace SoliteraxLibrary.SQLSystem
             {
                 accessConnection = new OleDbConnection(ConnectionKey);
                 accessConnection.Open();
-                databaseManager = new DatabaseManager(this);
+                databaseManager = new DatabaseManager(this, type);
                 databaseStorage = new DatabaseStorage();
             }
             
