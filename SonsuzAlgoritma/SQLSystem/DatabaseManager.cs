@@ -45,7 +45,8 @@ namespace SoliteraxLibrary.SQLSystem
 
         public void SendData(SqlCommand data)
         {
-
+            if (type != ConnectionType.SQL)
+                throw new DatabaseIsNotThisException();
             data.Connection = (SqlConnection)connection.GetConnection();
             data.ExecuteNonQuery();
             data.Dispose();
@@ -191,6 +192,14 @@ namespace SoliteraxLibrary.SQLSystem
         {
             public string title;
             public object value;
+        }
+
+        public class DatabaseIsNotThisException : Exception
+        {
+            public DatabaseIsNotThisException()
+            {
+                
+            }
         }
     }
 }

@@ -24,6 +24,14 @@ namespace SoliteraxLibrary.SQLSystem
             this.type = type;
         }
 
+        public ConnectDatabase(string IPAdress, string dbname, string charset, string username, string password, ConnectionType type)
+        {
+            throw new System.Exception();
+            this.type = type;
+            if (this.type == ConnectionType.SQL)
+                this.ConnectionKey = "";
+        }
+
 
         public void Connect()
         {
