@@ -182,6 +182,7 @@ namespace SoliteraxControlLibrary
             {
                 progvalue.Text = value.ToString();
                 intvalue = value;
+                CalculateProgress(value);
                 Invalidate();
             }
         }

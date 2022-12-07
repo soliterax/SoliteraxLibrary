@@ -29,6 +29,10 @@ namespace SoliteraxControlLibrary
 
         public bool haveBorder
         {
+            get
+            {
+                return HAVE_BORDER;
+            }
             set
             {
                 this.HAVE_BORDER = value;
