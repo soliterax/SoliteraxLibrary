@@ -11,231 +11,245 @@ using System.ComponentModel;
 
 namespace SoliteraxControlLibrary
 {
-    public class CustomProgressbar : CustomPanel
+    public class CustomProgressbar : ProgressBar
     {
 
-        private bool isAnimated = false;
-        private int animateSpeed = 0;
-        private int intvalue = 0;
-
-        private Panel rawPanel = new Panel();
-        private Panel progPanel = new Panel();
-        private bool progressText = false;
-
-        private Timer timer = new Timer();
-        private Panel rightPanel = new Panel();
-        private Panel leftPanel = new Panel();
-
-        private CustomLabel progvalue = new CustomLabel();
-
-        private Color progressIdleColor = Color.Blue;
-        private Color progressRunColor = Color.Yellow;
-        private Color progressStopColor = Color.Red;
-        private Color progressFinishColor = Color.Green;
-
-        protected override void OnResize(EventArgs e)
+        public enum TextPosition
         {
-            base.OnResize(e);
+            Left,
+            Right,
+            Center,
+            Sliding,
+            None
         }
+
+        private Color channelColor = Color.LightSteelBlue;
+        private Color sliderColor = Color.RoyalBlue;
+        private Color foreBackColor = Color.RoyalBlue;
+        private int channelHeight = 6;
+        private int sliderHeight = 6;
+        private TextPosition showValue = TextPosition.Right;
+        private string symbolBefore = "";
+        private string symbolAfter = "";
+        private bool showMaximun = false;
+
+        
+        private bool paintedBack = false;
+        private bool stopPainting = false;
 
         public CustomProgressbar()
         {
-            
-            setupComponents();
-            
+            this.SetStyle(ControlStyles.UserPaint, true);
+            this.ForeColor = Color.White;
         }
 
-        void setupComponents()
+        [Category("Soliterax Control Library")]
+        public Color ChannelColor
         {
-            this.Resize += CustomProgressbar_Resize;
-
-            rawPanel.Location = new Point(0, 0);
-            rawPanel.Size = base.Size;
-            rawPanel.Name = "RawPanel";
-            rawPanel.BackColor = base.BackColor;
-
-            progPanel.BackColor = progressIdleColor;
-            progPanel.Size = new Size(20, rawPanel.Size.Height);
-            progPanel.Location = new Point(0, 0);
-            progPanel.BackColor = progressIdleColor;
-            progPanel.Name = "ProgPanel";
-
-            timer.Interval = 100;
-            timer.Tick += Progress_Tick;
-            if (isAnimated == true)
-                timer.Start();
-
-            rightPanel.Location = new Point((rawPanel.Size.Width / 2), rawPanel.Location.Y);
-            leftPanel.Location = new Point(rawPanel.Size.Width / 2, rawPanel.Location.Y);
-
-            if (isAnimated)
-            {
-                this.Controls.Add(leftPanel);
-                this.Controls.Add(rightPanel);
-            }
-            else
-            {
-                rawPanel.Controls.Add(progPanel);
-                this.Controls.Add(rawPanel);
-                if(progressText)
-                    this.Controls.Add(progvalue);
-            }
-
-        }
-
-        private void CustomProgressbar_Resize(object sender, EventArgs e)
-        {
-            rawPanel.Size = new Size(rawPanel.Size.Width + (this.Size.Width - rawPanel.Size.Width), rawPanel.Size.Height + (this.Size.Height - rawPanel.Size.Height));
-            CalculateProgress(intvalue);
-        }
-
-        protected override void OnValidated(EventArgs e)
-        {
-
-            setupComponents();
-
-        }
-
-        
-
-        private void Progress_Tick(object sender, EventArgs e)
-        {
-            if (!isAnimated)
-                timer.Stop();
-
-            if(rightPanel.Location.X >= (rawPanel.Location.X + rawPanel.Size.Width))
-            {
-                rightPanel.Location = new Point((rawPanel.Size.Width /2), rawPanel.Location.Y);
-                leftPanel.Location = new Point(rawPanel.Size.Width / 2, rawPanel.Location.Y);
-            }
-
-            rightPanel.Size = new Size(((intvalue / 2) * rawPanel.Size.Width) / 100, 0);
-            rightPanel.Location = new Point(rightPanel.Location.X + (animateSpeed*10), rightPanel.Location.Y);
-            leftPanel.Size = new Size(((intvalue / 2) * rawPanel.Size.Width) / 100, 0);
-            leftPanel.Location = new Point(leftPanel.Location.X - (animateSpeed * 10), leftPanel.Location.Y);
-
-            rightPanel.Location = new Point();
-        }
-
-        void CalculateProgress(int value)
-        {
-
-        }
-
-        [Browsable(true)]
-        [Category("Progress Bar Properties")]
-        [Description("Animation set")]
-        [DisplayName("ProgressBar Animation")]
-        public bool IsAnimated
-        {
-            get
-            {
-                return isAnimated;
-            }
+            get { return channelColor; }
             set
             {
-                isAnimated = value;
+                channelColor = value;
+                this.Invalidate();
             }
         }
-
-        [Browsable(true)]
-        [Category("Progress Bar Properties")]
-        [Description("Animation Speed Set")]
-        [DisplayName("ProgressBar Animation Speed")]
-        public int AnimateSpeed
+        [Category("Soliterax Control Library")]
+        public Color SliderColor
         {
-            get
-            {
-                return animateSpeed;
-            }
+            get { return sliderColor; }
             set
             {
-                animateSpeed = value;
+                sliderColor = value;
+                this.Invalidate();
             }
         }
-
-        [Browsable(true)]
-        [Category("Progress Bar Properties")]
-        [Description("Progress Text Show")]
-        [DisplayName("ProgressBar Show Text")]
-        public bool IsShowText
+        [Category("Soliterax Control Library")]
+        public Color ForeBackColor
         {
-            get
-            {
-                return progressText;
-            }
+            get { return foreBackColor; }
             set
             {
-                progressText = value;
+                foreBackColor = value;
+                this.Invalidate();
             }
-
         }
-
-        [Browsable(true)]
-        [Category("Progress Bar Properties")]
-        [Description("Progress Value Set")]
-        [DisplayName("ProgressBar Value")]
-        public int ProgressValue
+        [Category("Soliterax Control Library")]
+        public int ChannelHeight
         {
-            get { return intvalue; }
+            get { return channelHeight; }
             set
             {
-                progvalue.Text = value.ToString();
-                intvalue = value;
-                CalculateProgress(value);
-                Invalidate();
+                channelHeight = value;
+                this.Invalidate();
             }
         }
-
-        [Browsable(true)]
-        [Category("Progress Bar Properties")]
-        [Description("Progress Bar Color Set")]
-        [DisplayName("Start Color")]
-        public Color ProgressStartColor
+        [Category("Soliterax Control Library")]
+        public int SliderHeight
         {
-            get
-            {
-                return progressRunColor;
-            }
+            get { return sliderHeight; }
             set
             {
-                progressRunColor = value;
+                sliderHeight = value;
+                this.Invalidate();
             }
         }
-
-        [Browsable(true)]
-        [Category("Progress Bar Properties")]
-        [Description("Progress Bar Color Set")]
-        [DisplayName("Stop Color")]
-        public Color ProgressStopColor
+        [Category("Soliterax Control Library")]
+        public TextPosition ShowValue
         {
-            get
-            {
-                return progressStopColor;
-            }
+            get { return showValue; }
             set
             {
-                progressStopColor = value;
+                showValue = value;
+                this.Invalidate();
             }
         }
-
-        [Browsable(true)]
-        [Category("Progress Bar Properties")]
-        [Description("Progress Bar Color Set")]
-        [DisplayName("Finish Color")]
-        public Color ProgressFinishColor
+        [Category("Soliterax Control Library")]
+        public string SymbolBefore
         {
-            get
-            {
-                return progressFinishColor;
-            }
+            get { return symbolBefore; }
             set
             {
-                progressFinishColor = value;
+                symbolBefore = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public string SymbolAfter
+        {
+            get { return symbolAfter; }
+            set
+            {
+                symbolAfter = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public bool ShowMaximun
+        {
+            get { return showMaximun; }
+            set
+            {
+                showMaximun = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        [Browsable(true)]
+        [EditorBrowsable(EditorBrowsableState.Always)]
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                base.Font = value;
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public override Color ForeColor
+        {
+            get { return base.ForeColor; }
+            set
+            {
+                base.ForeColor = value;
             }
         }
 
+        protected override void OnPaintBackground(PaintEventArgs pevent)
+        {
+            if (stopPainting == false)
+            {
+                if (paintedBack == false)
+                {
+                    //Fields
+                    Graphics graph = pevent.Graphics;
+                    Rectangle rectChannel = new Rectangle(0, 0, this.Width, ChannelHeight);
+                    using (var brushChannel = new SolidBrush(channelColor))
+                    {
+                        if (channelHeight >= sliderHeight)
+                            rectChannel.Y = this.Height - channelHeight;
+                        else rectChannel.Y = this.Height - ((channelHeight + sliderHeight) / 2);
+                        //Painting
+                        graph.Clear(this.Parent.BackColor);//Surface
+                        graph.FillRectangle(brushChannel, rectChannel);//Channel
+                                                                       //Stop painting the back & Channel
+                        if (this.DesignMode == false)
+                            paintedBack = true;
+                    }
+                }
+                //Reset painting the back & channel
+                if (this.Value == this.Maximum || this.Value == this.Minimum)
+                    paintedBack = false;
+            }
+        }
 
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            if (stopPainting == false)
+            {
+                //Fields
+                Graphics graph = e.Graphics;
+                double scaleFactor = (((double)this.Value - this.Minimum) / ((double)this.Maximum - this.Minimum));
+                int sliderWidth = (int)(this.Width * scaleFactor);
+                Rectangle rectSlider = new Rectangle(0, 0, sliderWidth, sliderHeight);
+                using (var brushSlider = new SolidBrush(sliderColor))
+                {
+                    if (sliderHeight >= channelHeight)
+                        rectSlider.Y = this.Height - sliderHeight;
+                    else rectSlider.Y = this.Height - ((sliderHeight + channelHeight) / 2);
+                    //Painting
+                    if (sliderWidth > 1) //Slider
+                        graph.FillRectangle(brushSlider, rectSlider);
+                    if (showValue != TextPosition.None) //Text
+                        DrawValueText(graph, sliderWidth, rectSlider);
+                }
+            }
+            if (this.Value == this.Maximum) stopPainting = true;//Stop painting
+            else stopPainting = false; //Keep painting
+        }
+
+        void DrawValueText(Graphics graph, int sliderWidth, Rectangle rectSlider)
+        {
+            //Fields
+            string text = symbolBefore + this.Value.ToString() + symbolAfter;
+            if (showMaximun) text = text + "/" + symbolBefore + this.Maximum.ToString() + symbolAfter;
+            var textSize = TextRenderer.MeasureText(text, this.Font);
+            var rectText = new Rectangle(0, 0, textSize.Width, textSize.Height + 2);
+            using (var brushText = new SolidBrush(this.ForeColor))
+            using (var brushTextBack = new SolidBrush(foreBackColor))
+            using (var textFormat = new StringFormat())
+            {
+                switch (showValue)
+                {
+                    case TextPosition.Left:
+                        rectText.X = 0;
+                        textFormat.Alignment = StringAlignment.Near;
+                        break;
+                    case TextPosition.Right:
+                        rectText.X = this.Width - textSize.Width;
+                        textFormat.Alignment = StringAlignment.Far;
+                        break;
+                    case TextPosition.Center:
+                        rectText.X = (this.Width - textSize.Width) / 2;
+                        textFormat.Alignment = StringAlignment.Center;
+                        break;
+                    case TextPosition.Sliding:
+                        rectText.X = sliderWidth - textSize.Width;
+                        textFormat.Alignment = StringAlignment.Center;
+                        //Clean previous text surface
+                        using (var brushClear = new SolidBrush(this.Parent.BackColor))
+                        {
+                            var rect = rectSlider;
+                            rect.Y = rectText.Y;
+                            rect.Height = rectText.Height;
+                            graph.FillRectangle(brushClear, rect);
+                        }
+                        break;
+                }
+                //Painting
+                graph.FillRectangle(brushTextBack, rectText);
+                graph.DrawString(text, this.Font, brushText, rectText, textFormat);
+            }
+        }
 
     }
 }

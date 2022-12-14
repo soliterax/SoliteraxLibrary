@@ -15,6 +15,8 @@ namespace SoliteraxControlLibrary
     {
 
         TextBox textBox1;
+        PictureBox pictureBox1;
+        PictureBox pictureBox2;
 
         public CustomTextBox()
         {
@@ -37,7 +39,7 @@ namespace SoliteraxControlLibrary
             this.textBox1.MouseEnter += new System.EventHandler(this.textBox1_MouseEnter);
             this.textBox1.MouseLeave += new System.EventHandler(this.textBox1_MouseLeave);
             // 
-            // RJTextBox
+            // Soliterax Control TextBox
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.Window;
@@ -60,6 +62,8 @@ namespace SoliteraxControlLibrary
         private int borderRadius = 0;
         private Color placeholderColor = Color.DarkGray;
         private string placeholderText = "";
+        private Image rightImage = null;
+        private Image leftImage = null;
         private bool isPlaceholder = false;
         private bool isPasswordChar = false;
 
@@ -123,6 +127,32 @@ namespace SoliteraxControlLibrary
                 textBox1.Multiline = false;
                 this.Height = textBox1.Height + this.Padding.Top + this.Padding.Bottom;
             }
+        }
+
+        private void ImageCalculate()
+        {
+            if (rightImage != null)
+            {
+                textBox1.Left += 15;
+                textBox1.Width -= 15;
+                pictureBox1.Location = new Point(10, 7);
+                pictureBox1.Size = new Size(15, 15);
+                pictureBox1.BackColor = this.BackColor;
+                pictureBox1.Image = rightImage;
+                pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+                this.Controls.Add(pictureBox1);
+            }
+            if(leftImage != null)
+            {
+                textBox1.Width -= 15;
+                pictureBox2.Location = new Point(textBox1.Width + textBox1.Location.X, 7);
+                pictureBox2.Size = new Size(15, 15);
+                pictureBox2.BackColor = this.BackColor;
+                pictureBox2.Image = leftImage;
+                pictureBox2.SizeMode = PictureBoxSizeMode.StretchImage;
+                this.Controls.Add(pictureBox2);
+            }
+
         }
         #endregion
 
@@ -243,6 +273,26 @@ namespace SoliteraxControlLibrary
             }
         }
         [Category("Soliterax Control Library")]
+        public Image RightImage
+        {
+            get { return rightImage; }
+            set
+            {
+                rightImage = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
+        public Image LeftImage
+        {
+            get { return leftImage; }
+            set
+            {
+                leftImage = value;
+                this.Invalidate();
+            }
+        }
+        [Category("Soliterax Control Library")]
         public Color PlaceholderColor
         {
             get { return placeholderColor; }
@@ -330,6 +380,7 @@ namespace SoliteraxControlLibrary
                         graph.DrawRectangle(penBorder, 0, 0, this.Width - 0.5F, this.Height - 0.5F);
                 }
             }
+            ImageCalculate();
         }
         #endregion
 

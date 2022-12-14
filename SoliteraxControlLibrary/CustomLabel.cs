@@ -26,7 +26,10 @@ namespace SoliteraxControlLibrary
         #endregion
 
         #region Properties
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Is Border")]
         public bool haveBorder
         {
             get
@@ -40,9 +43,9 @@ namespace SoliteraxControlLibrary
         }
 
         [Browsable(true)]
-        [Category("Extended Properties")]
+        [Category("Soliterax Control Library")]
         [Description("sets Watermark color")]
-        [DisplayName("WaterMark Color")]
+        [DisplayName("Border Size")]
         public int BorderSize
         {
             get
@@ -58,9 +61,9 @@ namespace SoliteraxControlLibrary
             }
         }
         [Browsable(true)]
-        [Category("Extended Properties")]
+        [Category("Soliterax Control Library")]
         [Description("sets Watermark color")]
-        [DisplayName("WaterMark Color")]
+        [DisplayName("Border Color")]
         public Color BorderColor
         {
             get
@@ -75,7 +78,10 @@ namespace SoliteraxControlLibrary
                 this.BORDER_BOTTOM_COLOR = value;
             }
         }
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Border Right Size")]
         public int borderRightSize
         {
             get
@@ -87,7 +93,10 @@ namespace SoliteraxControlLibrary
                 this.BORDER_RIGHT_SIZE = value;
             }
         }
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Border Left Size")]
         public int borderLeftSize
         {
             get
@@ -99,7 +108,10 @@ namespace SoliteraxControlLibrary
                 this.BORDER_LEFT_SIZE = value;
             }
         }
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Border Top Size")]
         public int borderTopSize
         {
             get
@@ -111,7 +123,10 @@ namespace SoliteraxControlLibrary
                 this.BORDER_TOP_SIZE = value;
             }
         }
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Border Bottom Size")]
         public int borderBottomSize
         {
             get
@@ -123,7 +138,10 @@ namespace SoliteraxControlLibrary
                 this.BORDER_BOTTOM_SIZE = value;
             }
         }
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Border Right Color")]
         public Color borderRightColor
         {
             get
@@ -135,7 +153,10 @@ namespace SoliteraxControlLibrary
                 this.BORDER_RIGHT_COLOR = value;
             }
         }
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Border Left Color")]
         public Color borderLeftColor
         {
             get
@@ -147,7 +168,10 @@ namespace SoliteraxControlLibrary
                 this.BORDER_LEFT_COLOR = value;
             }
         }
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Border Top Color")]
         public Color borderTopColor
         {
             get
@@ -159,7 +183,10 @@ namespace SoliteraxControlLibrary
                 this.BORDER_TOP_COLOR = value;
             }
         }
-
+        [Browsable(true)]
+        [Category("Soliterax Control Library")]
+        [Description("sets Watermark color")]
+        [DisplayName("Border Bottom Color")]
         public Color borderBottomColor
         {
             get

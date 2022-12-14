@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using System.Data.OleDb;
 using static SoliteraxLibrary.SoliteraxConnection;
 
@@ -32,8 +33,16 @@ namespace SoliteraxLibrary.SQLSystem
                 this.ConnectionKey = "";
         }
 
+        public static string CreateConnectionString(string IpAdress, string databaseName, string charset, string username, string password, ConnectionType type)
+        {
+            if (type == ConnectionType.SQL)
+                return $"Data Source = {IpAdress}; Initial Catalog = {databaseName}; User ID = {username}; Password = {password}; charset={charset}";
+            else
+                throw new NotImplementedException();
+        }
 
-        public void Connect()
+
+        public ConnectDatabase Connect()
         {
             if(type == ConnectionType.SQL)
             {
@@ -48,8 +57,10 @@ namespace SoliteraxLibrary.SQLSystem
                 databaseManager = new DatabaseManager(this, type);
                 databaseStorage = new DatabaseStorage();
             }
-            
+            return this;
         }
+
+        
 
         public void DisConnect()
         {
